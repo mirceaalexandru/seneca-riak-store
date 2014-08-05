@@ -29,3 +29,8 @@ Usage:
 [seneca]: http://senecajs.org/
 [riak]: http://basho.com/riak/
 
+Acknowledgements
+----------------
+
+This project was sponsored by [nearForm](http://nearform.com).
+
