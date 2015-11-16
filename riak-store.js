@@ -1,7 +1,3 @@
-/* jslint node: true */
-/* jslint asi: true */
-/* Copyright (c) 2013 Mircea Alexandru */
-
 'use strict'
 
 var _ = require('lodash')
