@@ -2,10 +2,11 @@
   "name": "seneca-riak-store",
   "version": "0.0.1",
   "description": "Riak data store plugin for Seneca",
-  "main": "lib/riak-store.js",
+  "main": "riak-store.js",
   "author": "Mircea Alexandru",
   "license": "MIT",
   "readmeFilename": "README.md",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/mirceaalexandru/seneca-riak-store.git"
@@ -16,18 +17,15 @@
     "riak",
     "store"
   ],
-  "scripts": {
-  },
   "dependencies": {
-    "seneca": "0.5.x",
-    "underscore": "1.4.x",
-    "riak-js":"0.10.2",
-    "node-uuid": "1.4.x"
+    "basho-riak-client": "1.8.1",
+    "eraro": "0.4.1",
+    "lodash": "3.10.1",
+    "node-uuid": "1.4.6"
   },
   "devDependencies": {
-    "mocha": "1.9.x",
-    "chai": "1.5.x",
-    "async":"0.2.9",
-    "eyes":"0.1.8"
+    "seneca": "~0.7.2",
+    "seneca-store-test": "1.0.0",
+    "chai": "1.5.x"
   }
 }

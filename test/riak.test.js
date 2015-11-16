@@ -6,8 +6,7 @@
 var seneca= require('seneca')
 var async = require('async')
 var assert= require('chai').assert
-var _     = require('underscore')
-var eyes  = require('eyes')
+var _     = require('lodash')
 
 var si = seneca({log:'print'});
 si.use(require('..'), {
@@ -15,16 +14,10 @@ si.use(require('..'), {
   port:   "8098"
 })
 
-var testcount = 0
-si.__testcount = 0
+var Lab = require('lab')
+var lab = exports.lab = Lab.script()
 
-var verify = function(cb,tests){
-  return function(error,out) {
-    if( error ) return cb(error);
-    tests(out)
-    cb()
-  }
-}
+var describe = lab.describe
 
 var bartemplate = {
   name$:'bar',
@@ -53,18 +46,12 @@ var barverify = function(bar) {
 var scratch = {}
 
 describe('riak', function () {
-  it('basic', function (done) {
-    testcount++
-    basictest(si, done)
-  })
+  basictest(function(){
 
-  it('close', function (done) {
-    closetest(si, testcount, done)
   })
 })
 
-var basictest = function(si,done) {
-  si.ready(function(){
+function basictest(done) {
     console.log('BASIC')
     assert.isNotNull(si)
 
@@ -80,11 +67,14 @@ var basictest = function(si,done) {
           var foo1 = si.make({name$:'foo'}) ///si.make('foo')
           foo1.p1 = 'v1'
 
-          foo1.save$( verify(cb, function(foo1){
+          foo1.save$( function(err, foo1){
+            console.log('!!!!!!!!!!', err, foo1)
+            assert(!err)
             assert.isNotNull(foo1.id)
             assert.equal('v1',foo1.p1)
             scratch.foo1 = foo1
-          }))
+            cb()
+          })
         },
 
         save2: function(cb) {
@@ -153,32 +143,6 @@ var basictest = function(si,done) {
         }
       },
       function(err,out) {
-        if( err ) {
-          eyes.inspect( err )
-        }
-        si.__testcount++
-        assert.isNull(err)
-        done && done()
+        done()
       })
-  })
 }
-
-var closetest = function(si,testcount,done) {
-  var RETRY_LIMIT = 10
-  var retryCnt = 0
-
-  function retry(){
-    if( testcount <= si.__testcount || retryCnt > RETRY_LIMIT ) {
-      console.log('CLOSE')
-      si.close()
-      done && done()
-    }
-    else {
-      retryCnt++
-      setTimeout(retry, 500);
-    }
-  }
-  retry()
-}
-
-
