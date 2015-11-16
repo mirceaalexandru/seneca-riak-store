@@ -1,15 +1,12 @@
-/* jslint node: true */
-/* jslint asi: true */
-/* Copyright (c) 2013 Mircea Alexandru */
-"use strict";
+'use strict'
 
-var _ = require('lodash');
+var _ = require('lodash')
 var Riak = require('basho-riak-client')
 var KV = Riak.Commands.KV
 
 var util = require('./lib/util')
 
-var name = 'riak-store';
+var name = 'riak-store'
 var ERARO = require('eraro')({package: name})
 
 module.exports = function (opts) {
@@ -19,6 +16,9 @@ module.exports = function (opts) {
   }
 
   function configure (spec, done) {
+    if (!spec || !spec.nodes || !_.isArray(spec.nodes)) {
+      return done('Riak options incorrect. Should contain nodes array ["host1:port1", "host2:port2"]')
+    }
     internals.dbinst = new Riak.Client(spec.nodes)
     done()
   }
@@ -27,9 +27,9 @@ module.exports = function (opts) {
   var store = {
     name: name,
 
-    close: function (done) {
+    close: function (args, done) {
       seneca.log(name, 'instance closed')
-      done()
+      done && done()
     },
 
     save: function (args, done) {
@@ -59,7 +59,7 @@ module.exports = function (opts) {
 
           ent.load$({id: id}, function (err, data) {
             seneca.log(args.tag$, 'save', data)
-            done(null, data)
+            done(err, data)
           })
         })
         .build()
@@ -83,11 +83,11 @@ module.exports = function (opts) {
             return done(ERARO({code: 'load', tag: args.tag$, store: store.name, query: query, meta: meta, error: err}))
           }
 
-          if (data.isNotFound){
+          if (data.isNotFound) {
             return done()
           }
 
-          if (data.values && data.values.length > 0){
+          if (data.values && data.values.length > 0) {
             var row = data.values[0].getValue()
             var key = data.values[0].getKey().toString('utf8')
             var ent = qent.make$(row)
@@ -104,7 +104,6 @@ module.exports = function (opts) {
 
     list: function (args, done) {
       throw new ERARO({code: 'list', tag: args.tag$, error: 'not implemented'})
-      done(new ERARO({code: 'list', tag: args.tag$, error: 'not implemented'}))
     },
 
 
@@ -113,24 +112,25 @@ module.exports = function (opts) {
       var q = args.q
 
       if (q.all$) {
-        return done( ERARO({code: 'remove', tag: args.tag$, store: store.name, error: 'remove all not implemented'}))
+        return done(ERARO({code: 'remove', tag: args.tag$, store: store.name, error: 'remove all not implemented'}))
       }
       var query = selectstm(qent, q)
 
       var row
-      if (q.load$){
-        store.load(args, function (err, db_ent){
-          if (err){
+      if (q.load$) {
+        store.load(args, function (err, db_ent) {
+          if (err) {
             return done(ERARO({code: 'remove', tag: args.tag$, store: store.name, query: query, error: err}))
           }
           row = db_ent
           do_remove()
         })
-      }else{
+      }
+      else {
         do_remove()
       }
 
-      function do_remove(){
+      function do_remove () {
         var deleteValue = new KV.DeleteValue.Builder()
           .withBucket(query.bucket)
           .withKey(query.id)
