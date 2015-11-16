@@ -4,6 +4,3 @@ node_js:
   - 0.10
   - 0.12
   - 4
-services: mysql
-before_script:
-  - mysql -h localhost -u root --password="" < ./script/schema.sql
