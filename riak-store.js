@@ -6,7 +6,6 @@
 var _ = require('lodash');
 var Riak = require('basho-riak-client')
 var KV = Riak.Commands.KV
-var UUID = require('node-uuid');
 
 var util = require('./lib/util')
 
@@ -44,10 +43,6 @@ module.exports = function (opts) {
         }
       }
 
-//      if (!ent.id) {
-//        ent.id = UUID()
-//      }
-
       var query = savestm(ent)
 
       var storeValue = new KV.StoreValue.Builder()
@@ -81,16 +76,26 @@ module.exports = function (opts) {
       var fetchValue = new KV.FetchValue.Builder()
         .withBucket(query.bucket)
         .withKey(query.id)
+        .withConvertValueToJs(true)
         .withCallback(function (err, data) {
           if (err) {
             seneca.log.error({code: 'load', tag: args.tag$, store: store.name, query: query, meta: meta, error: err})
             return done(ERARO({code: 'load', tag: args.tag$, store: store.name, query: query, meta: meta, error: err}))
           }
 
-          var ent = qent.make$(row)
-          ent.id = query.id
-          seneca.log(args.tag$, 'load', ent)
-          done(null, ent)
+          if (data.isNotFound){
+            return done()
+          }
+
+          if (data.values && data.values.length > 0){
+            var row = data.values[0].getValue()
+            var key = data.values[0].getKey().toString('utf8')
+            var ent = qent.make$(row)
+            row.id = key
+            seneca.log(args.tag$, 'load', ent)
+            return done(null, row)
+          }
+          done()
         })
         .build()
       internals.dbinst.execute(fetchValue)
@@ -105,25 +110,35 @@ module.exports = function (opts) {
 
     remove: function (args, done) {
       var qent = args.qent
-      var q = _.clone(args.q)
+      var q = args.q
 
       if (q.all$) {
-        seneca.fail({code: 'remove', tag: args.tag$, store: store.name, error: 'remove all not implemented'}, done)
+        return done( ERARO({code: 'remove', tag: args.tag$, store: store.name, error: 'remove all not implemented'}))
       }
-      else {
-        var query = selectstm(qent, q)
+      var query = selectstm(qent, q)
 
+      var row
+      if (q.load$){
+        store.load(args, function (err, db_ent){
+          if (err){
+            return done(ERARO({code: 'remove', tag: args.tag$, store: store.name, query: query, error: err}))
+          }
+          row = db_ent
+          do_remove()
+        })
+      }else{
+        do_remove()
+      }
 
+      function do_remove(){
         var deleteValue = new KV.DeleteValue.Builder()
           .withBucket(query.bucket)
           .withKey(query.id)
           .withCallback(function (err, data) {
             if (err) {
-              seneca.fail({code: 'remove', tag: args.tag$, store: store.name, query: query, error: err}, done)
+              return done(ERARO({code: 'remove', tag: args.tag$, store: store.name, query: query, error: err}))
             }
-            else {
-              return done(err)
-            }
+            return done(err, row)
           })
           .build()
         internals.dbinst.execute(deleteValue)
@@ -160,7 +175,7 @@ module.exports = function (opts) {
     var stm = {}
 
     stm.bucket = util.getBucketName(qent)
-    stm.id = q.id
+    stm.id = q.id || qent.id
 
     return stm
   }
