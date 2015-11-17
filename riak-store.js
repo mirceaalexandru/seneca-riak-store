@@ -55,7 +55,7 @@ module.exports = function (opts) {
             return done(ERARO({code: 'save', tag: args.tag$, store: store.name, query: query, error: err}))
           }
 
-          var id = ent.id || data.generatedKey
+          var id = query.id || data.generatedKey
 
           ent.load$({id: id}, function (err, data) {
             seneca.log(args.tag$, 'save', data)
@@ -90,9 +90,9 @@ module.exports = function (opts) {
           if (data.values && data.values.length > 0) {
             var row = data.values[0].getValue()
             var key = data.values[0].getKey().toString('utf8')
-            var ent = qent.make$(row)
+            row = qent.make$(row)
             row.id = key
-            seneca.log(args.tag$, 'load', ent)
+            seneca.log(args.tag$, 'load', row)
             return done(null, row)
           }
           done()
