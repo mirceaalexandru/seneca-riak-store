@@ -7,7 +7,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "scripts": {
-    "test": "lab test/*.test.js -r console -v -L -m 3000 -t 70",
+    "test": "lab test/*.test.js -r console -v -L -m 3000 -t 80",
     "annotate": "docco redis-queue-transport.js -o doc"
   },
   "repository": {

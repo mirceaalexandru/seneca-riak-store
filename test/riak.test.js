@@ -9,11 +9,9 @@ var test = lab.test
 
 var si = seneca({log: 'print'})
 
-si.use(require('..'), {
-  nodes: [
-    '127.0.0.1:8087'
-  ]
-})
+var default_options = require('./default-options.json')
+
+si.use(require('..'), default_options)
 
 var scratch = {}
 
