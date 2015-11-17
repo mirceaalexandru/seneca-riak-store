@@ -18,6 +18,7 @@ COPY package.json package.json
 COPY riak-store.js riak-store.js
 COPY .eslintrc .eslintrc
 COPY test test
+COPY test/docker-options.json test/default-options.json
 COPY lib lib
 
 #############################################

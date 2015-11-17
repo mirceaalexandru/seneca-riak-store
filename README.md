@@ -38,7 +38,7 @@ npm run test
 ```js
 var seneca = require('seneca')()
 seneca.use('riak-store', {
-  nodes: ["host1:port1", ["host2:port2"]]
+  nodes: ["host1:port1", "host2:port2"]]
 })
 
 seneca.ready(function () {
@@ -69,6 +69,7 @@ Due to Riak DB limitations some of the standard Seneca store operations are not 
 
 These are:
 - `.list$({f1:v1, f2:v2, ...})` - list operation is not implemented it will throw error
+- `.remove$({all$: true})` - DB engine allow delete only for specified ids
 
 
 ## Testing with Docker Compose

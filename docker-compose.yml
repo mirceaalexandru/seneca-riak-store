@@ -2,6 +2,7 @@ riak:
   build: docker/riak
   expose:
     - "8098"
+    - "8087"
 store:
   build: .
   links:
