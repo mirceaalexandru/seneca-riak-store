@@ -8,6 +8,11 @@
     "email": "mircea.alexandru@gmail.com"
   },
   "license": "MIT",
+  "files": [
+    "LICENSE.txt",
+    "README.md",
+    "riak-store.js"
+  ],
   "readmeFilename": "README.md",
   "scripts": {
     "test": "node_modules/.bin/lab test/*.test.js -r console -v -L -I i -m 3000 -t 80",
