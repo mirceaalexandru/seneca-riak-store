@@ -10,12 +10,13 @@ var test = lab.test
 var si = seneca({log: 'print'})
 
 var default_options = require('./default-options.json')
-
 si.use(require('..'), default_options)
 
-var scratch = {}
+console.log('Using Riak configuration: ', default_options)
 
 suite('basic test', function () {
+  var scratch = {}
+
   test('save 1 test', function (done) {
     var foo1 = si.make({name$: 'foo'})
 
@@ -65,4 +66,39 @@ suite('basic test', function () {
       })
     })
   })
+
+//  test('test update with merge$: true|false', function (done) {
+//    var foo = si.make('foo')
+//    foo.p1 = 'z1'
+//    foo.p2 = 'z2'
+//
+//    foo.save$(function (err, foo1) {
+//      Assert.isNull(err)
+//      Assert.isNotNull(foo1.id)
+//      Assert.equal(foo1.p1, 'z1')
+//      Assert.equal(foo1.p2, 'z2')
+//
+//      foo1.p1 = 'z2'
+//      delete foo1.p2
+//
+//      foo1.save$({ merge$: true }, function (err, foo1) {
+//        Assert.isNull(err)
+//        Assert.isNotNull(foo1.id)
+//        Assert.equal(foo1.p1, 'z2')
+//        Assert.equal(foo1.p2, 'z2')
+//        Assert(!foo1.merge$)
+//
+//        foo1.p1 = 'z3'
+//        delete foo1.p2
+//        foo1.save$({ merge$: false }, function (err, foo1) {
+//          Assert.isNull(err)
+//          Assert.isNotNull(foo1.id)
+//          Assert.equal(foo1.p1, 'z3')
+//          Assert(!foo1.p2)
+//          Assert(!foo1.merge$)
+//          done()
+//        })
+//      })
+//    })
+//  })
 })

@@ -19,7 +19,8 @@ COPY riak-store.js riak-store.js
 COPY .eslintrc .eslintrc
 COPY test test
 COPY test/docker-options.json test/default-options.json
-COPY lib lib
+COPY docker/script.sh script.sh
+RUN chmod a+x script.sh
 
 #############################################
 # Install dependencies
@@ -27,4 +28,4 @@ COPY lib lib
 RUN npm install
 
 
-ENTRYPOINT npm run test
+ENTRYPOINT /opt/app/script.sh
