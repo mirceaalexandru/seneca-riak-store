@@ -13,6 +13,7 @@ module.exports = function (opts) {
     opts: opts
   }
 
+  // Configure store
   function configure (spec, done) {
     if (!spec || !spec.nodes || !_.isArray(spec.nodes)) {
       return done('Riak options incorrect. Should contain nodes array ["host1:port1", "host2:port2"]')
@@ -25,11 +26,13 @@ module.exports = function (opts) {
   var store = {
     name: name,
 
+    // Close
     close: function (args, done) {
       seneca.log(name, 'instance closed')
       done && done()
     },
 
+    // Save or update
     save: function (args, done) {
       var ent = args.ent
       ent = ent.clone$(ent)

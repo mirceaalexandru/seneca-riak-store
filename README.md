@@ -18,6 +18,11 @@ If you're using this module, and need help, you can:
 If you are new to Seneca in general, please take a look at [senecajs.org][]. We have everything from
 tutorials to sample apps to help get you up and running quickly.
 
+seneca-riak-store's source can be read in an annotated fashion by,
+
+- Running `npm run annotate`
+- The annotated source can be found locally at [./doc/riak-store.html]().
+
 ## Install
 To install, simply use npm. Remember you will need to install [Seneca.js][]
 separately.
@@ -69,7 +74,7 @@ Due to Riak DB limitations some of the standard Seneca store operations are not 
 
 These are:
 - `.list$({f1:v1, f2:v2, ...})` - list operation is not implemented it will throw error
-- `.remove$({all$: true})` - DB engine allow delete only for specified ids
+- `.remove$({all$: true})` - DB engine allow delete only for specified ids so this function is not available in this store.
 
 
 ## Testing with Docker Compose

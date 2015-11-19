@@ -1,6 +1,6 @@
 {
   "name": "seneca-riak-store",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Riak data store plugin for Seneca",
   "main": "riak-store.js",
   "author": {
@@ -16,7 +16,7 @@
   "readmeFilename": "README.md",
   "scripts": {
     "test": "node_modules/.bin/lab test/*.test.js -r console -v -L -I i -m 3000 -t 80",
-    "annotate": "docco redis-queue-transport.js -o doc"
+    "annotate": "docco riak-store.js -o doc"
   },
   "repository": {
     "type": "git",
