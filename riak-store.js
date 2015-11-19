@@ -4,8 +4,6 @@ var _ = require('lodash')
 var Riak = require('basho-riak-client')
 var KV = Riak.Commands.KV
 
-var util = require('./lib/util')
-
 var name = 'riak-store'
 var ERARO = require('eraro')({package: name})
 
@@ -153,7 +151,7 @@ module.exports = function (opts) {
   var savestm = function (ent) {
     var stm = {}
 
-    stm.bucket = util.getBucketName(ent)
+    stm.bucket = getBucketName(ent)
     stm.id = ent.id
     delete ent.id
 
@@ -161,7 +159,7 @@ module.exports = function (opts) {
 
     var fields = ent.fields$()
 
-    for (var i = 0; i < fields.length; i++) {
+    for (var i in fields) {
       var field = fields[i]
       if (!(_.isUndefined(ent[field]) || _.isNull(ent[field]))) {
         stm.value[field] = ent[field]
@@ -174,7 +172,7 @@ module.exports = function (opts) {
   var selectstm = function (qent, q) {
     var stm = {}
 
-    stm.bucket = util.getBucketName(qent)
+    stm.bucket = getBucketName(qent)
     stm.id = q.id || qent.id
 
     return stm
@@ -190,3 +188,8 @@ module.exports = function (opts) {
   return { name: store.name, tag: meta.tag }
 }
 
+function getBucketName (entity) {
+  var canon = entity.canon$({object: true})
+
+  return (canon.base ? canon.base + '_' : '') + canon.name
+}
